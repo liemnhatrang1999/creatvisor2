@@ -2,3 +2,4 @@ django
 djangorestframework
 mysqlclient
 pillow
+djangorestframework-simplejwt

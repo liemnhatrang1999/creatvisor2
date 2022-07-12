@@ -9,9 +9,21 @@ from rest_framework.routers import DefaultRouter
 # router.register('atelier',AtelierViews)
 # router.register('client',ClientViews)
 # router.register('consultant',ConsultantViews)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('api/',views.ClientViews.as_view({
-    'get': 'list',
+    'get' : 'list'  , 
     'post': 'create'
-}))]
+
+})),
+    path('api/<int:pk>/',views.ClientViews.as_view({
+    'put': 'update',
+    'get': 'retrieve'    
+})),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
