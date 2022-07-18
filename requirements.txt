@@ -3,3 +3,4 @@ djangorestframework
 mysqlclient
 pillow
 djangorestframework-simplejwt
+djangorestframework-simplejwt
