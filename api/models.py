@@ -17,28 +17,28 @@ from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUse
 #         return self.nomClient
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, email, prenom,nom, password = None):
+    def create_user(self, email, prenom,nom,phone, password = None):
         if not email :
             raise ValueError('need email')
         email = self.normalize_email(email)
         email = email.lower()
         
-        user = self.model(email = email,prenom = prenom,nom=nom)
+        user = self.model(email = email,prenom = prenom,phone=phone,nom=nom)
         user.set_password(password)
         
         user.save(using=self._db)
         return user
 
-    def create_consultant(self, email , prenom,nom ,password = None):
-        user = self.create_user(email,prenom,nom,password)
+    def create_consultant(self,phone, email , prenom,nom ,password = None):
+        user = self.create_user(email,prenom,nom,phone,password)
         user.is_consultant = True
         
         user.save(using =self._db)
         return user
 
 
-    def create_superuser(self, email , prenom ,nom,password = None):
-        user = self.create_user(email,prenom,nom,password)
+    def create_superuser(self, email , prenom ,nom,phone,password = None):
+        user = self.create_user(email,prenom,nom,phone,password)
         user.is_staff = True
         user.is_superuser = True
         
@@ -51,7 +51,7 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(max_length=255,unique=True)
     prenom = models.CharField(max_length=255)
     nom = models.CharField(max_length=255)
-    
+    phone = models.CharField(max_length=255)
 
     is_active = models.BooleanField(default=True)
     is_staff   =models.BooleanField(default=False)
