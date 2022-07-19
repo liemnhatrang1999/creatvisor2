@@ -1,6 +1,10 @@
 from django.contrib import admin
 
 
-# from api.models import Client
+from api.models import UserAccount
 
-# admin.site.register(Client)
+@admin.register(UserAccount)
+class UserAdmin(admin.ModelAdmin):
+    list_display =('email','nom','prenom','phone')
+    ordering = ('nom',)
+    search_fields = ('nom',)
