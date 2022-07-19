@@ -1,4 +1,5 @@
 import email
+from urllib import response
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from rest_framework.decorators import action
@@ -106,8 +107,10 @@ class RegisterView(APIView):
         except :
             return Response({"erreur" : "échec "},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
+    def get(self,request):
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset,many=True)
+        return Response(serializer.data)
 
 class RetrieveView(APIView):
     def get(self,request):
