@@ -83,26 +83,26 @@ class RegisterView(APIView):
             email = data['email']
             email = email.lower()
             password = data['password']
-            re_password = data['re_password']
-            is_consultant = data['is_consultant']
-
-            if is_consultant == 'True':
-                is_consultant =True
             
-            else :
-                is_consultant = False
-            
-            if password == re_password :
-                if not User.objects.filter(email=email).exists():
-                    if is_consultant == True :
-                        User.objects.create_consultant(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
-                        return Response({'reussi' :'oui'},status=status.HTTP_201_CREATED)
+            # is_consultant = data['is_consultant']
 
-                    else :
-                        User.objects.create_user(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
-                        return Response({'reussi' :'oui'},status=status.HTTP_201_CREATED)
-                else:
-                    return Response({'error':'déjà utilisé'},status=status.HTTP_400_BAD_REQUEST)
+            # if is_consultant == 'True':
+            #     is_consultant =True
+            
+            # else :
+            #     is_consultant = False
+            
+        # if password == re_password :
+            if not User.objects.filter(email=email).exists():
+                # if is_consultant == True :
+                    # User.objects.create_consultant(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
+                    # return Response({'reussi' :'oui'},status=status.HTTP_201_CREATED)
+
+                # else :
+                    User.objects.create_user(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
+                    return Response({'reussi' :'oui'},status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error':'déjà utilisé'},status=status.HTTP_400_BAD_REQUEST)
         except :
             return Response({"erreur" : "échec "},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
