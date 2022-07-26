@@ -28,7 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('auth/',obtain_auth_token),
     path('',include('api.urls')),
-    path('auth/user/',include('api.urls'))
+    # path('auth/user/',include('api.urls'))
 ]
 
 if settings.DEBUG:

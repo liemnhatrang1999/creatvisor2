@@ -28,7 +28,7 @@ class AtelierSerializer(FlexFieldsModelSerializer):
     
     class Meta :
         model = Atelier
-        fields = ('id','nbparticipants','nom','date','pre_requis','participants','thematique_metier')
+        fields = ('id','nbparticipants','nom','pre_requis','participants','thematique_metier')
         expandable_fields = { 
             'participants' : (UserSerializer,{'many' : True}),
             'thematique_metier' :(Thematique_metierSerializer,{'many' : True})

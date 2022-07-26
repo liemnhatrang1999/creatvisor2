@@ -1,7 +1,6 @@
 from asyncio import mixins
 import email
 from email import message
-from urllib import response
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
@@ -13,7 +12,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from api import models
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets,filters
 from api.serializer import *
 # from .models import Client
 from rest_framework.permissions import IsAuthenticated
@@ -199,10 +198,12 @@ class RetrieveView(APIView):
 
 
 class Atelier(FlexFieldsModelViewSet):
+
     queryset = Atelier.objects.all()
-    
     serializer_class = AtelierSerializer
     permit_list_expands =['participants','thematique_metier']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['thematique_metier__nom']
     filterset_fields =('thematique_metier',)
     permission_classes=[AllowAny]
 
