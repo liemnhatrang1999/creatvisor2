@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django_filters',
     
 ]
 
@@ -90,7 +91,30 @@ DATABASES = {
         'HOST':'localhost', 
         'PORT':'3306'
     }
+    # 'users' :{
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'backend', 
+    #     'USER':'liemliam', 
+    #     'PASSWORD':'anhliem12',  
+    #     'HOST':'localhost', 
+    #     'PORT':'3306'
+    # },
+
+    # 'atelier' : {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'atelier', 
+    #     'USER':'liemliam', 
+    #     'PASSWORD':'anhliem12',  
+    #     'HOST':'localhost', 
+    #     'PORT':'3306'
+    # }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR,'db.sqlite3'), 
 }
+
+
+# DATABASE_ROUTERS = ['path.to.ApplicationRouter']
 
 
 # Password validation
@@ -141,8 +165,13 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        # 'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', ]
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly', ]
+        # 'rest_framework.permissions.AllowAny', ]
 }
 
 SIMPLE_JWT ={
@@ -158,4 +187,42 @@ AUTH_USER_MODEL ='api.UserAccount'
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.RemoteUserBackend',
         'django.contrib.auth.backends.ModelBackend',
+
 )
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "thanhliemnguyen2508@gmail.com"
+EMAIL_HOST_PASSWORD = 'vhdxduvxpgtiwqef'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+
+
+# LOGGING = {
+#     'version': 1,
+#     'filters': {
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'class': 'logging.StreamHandler',
+#         }
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         }
+#     }
+# }

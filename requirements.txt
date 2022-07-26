@@ -1,6 +1,8 @@
-django
+django == 3.2.14
 djangorestframework
 mysqlclient
 pillow
 djangorestframework-simplejwt
-djangorestframework-simplejwt
+drf-flex-fields
+django-filter
+djangorestframework-serializer-extensions

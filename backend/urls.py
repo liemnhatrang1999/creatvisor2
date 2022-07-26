@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework.authtoken.views import obtain_auth_token
 import api
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 
 from api.serializer import User
 
@@ -26,3 +30,7 @@ urlpatterns = [
     path('',include('api.urls')),
     path('auth/user/',include('api.urls'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
