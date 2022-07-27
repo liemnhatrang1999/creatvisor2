@@ -3,6 +3,7 @@ from cgitb import text
 import email
 from pyexpat import model
 import site
+from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUserManager
 
@@ -50,6 +51,9 @@ class UserAccountManager(BaseUserManager):
 
 
 
+# AUTH_PROVIDERS = {'facebook':'facebook','email':'email','google':'google'}
+
+
 
 
 class UserAccount(AbstractBaseUser,PermissionsMixin): 
@@ -57,7 +61,9 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
     prenom = models.CharField(max_length=255)
     nom = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
-
+    # auth_provider = models.CharField(max_length=255,blank=False,null=False,default=AUTH_PROVIDERS.get('email'))
+    # info_entrepreneur = models.ManyToManyField(Info_entrepreneur,blank=True, related_name="info_entrepreneur")
+    # info_consultant = models.ManyToManyField(Info_consultant,blank=True, related_name="infor_consultant")
 
     is_active = models.BooleanField(default=False)
     is_staff   =models.BooleanField(default=False)
@@ -66,6 +72,7 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['prenom','nom','phone']    
+
 
 class Thematique_metier(models.Model):
     nom = models.CharField(max_length=255)
@@ -80,34 +87,42 @@ class Thematique_metier(models.Model):
 #             val.replace(microsecond=0)
 #             return val.isoformat()
 #         return ''
-class Atelier(models.Model):
-    nbparticipants = models.IntegerField(default=0)
-    nom = models.CharField(max_length=255)
-    pre_requis = models.TextField(max_length=10000,default="")
-    thematique_metier = models.ManyToManyField(Thematique_metier,related_name='atelier',default=None)
-    participants = models.ManyToManyField(UserAccount,related_name="atelier",blank=True)
-    # date = models.DateTimeField(auto_now=False, auto_now_add=False, )
-
-class UserAtelier(models.Model):
-    id_user = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
-    id_atelier = models.ForeignKey(Atelier, on_delete=models.CASCADE)
-
-   
 class Info_entrepreneur(models.Model):
     photo = models.ImageField( upload_to='media', height_field=None, width_field=None, max_length=None)
     valeur_humaine = models.TextField()
     secteur = models.CharField(max_length=255)
     problematique = models.TextField()
-    project = models.TextField()
-    id_entrepreneur = models.ForeignKey(UserAccount,on_delete=models.CASCADE)
+    project = models.TextField(blank=True)
+    user = models.ManyToManyField(UserAccount, related_name="info_entrepreneur")
+
+    
+    def __str__(self) :
+        L=[]
+        user= self.user.all()
+        for p in user:
+            L.append(p)
+        B = f"{L[0]}"
+        B = B.split(":")
+        
+        return B[0]
+class Atelier(models.Model):
+    nbparticipants = models.IntegerField(default=0)
+    nom = models.CharField(max_length=255)
+    pre_requis = models.TextField(max_length=10000,default="")
+    thematique_metier = models.ManyToManyField(Thematique_metier,related_name='atelier',default=None)
+    participants = models.ManyToManyField(Info_entrepreneur,related_name="atelier",blank=True)
+    
+    # date = models.DateTimeField(auto_now=False, auto_now_add=False, )
+
+
 
 class Info_consultant(models.Model):
+    
     photo = models.ImageField( upload_to='media', height_field=None, width_field=None, max_length=None)
     thematique = models.TextField()
     experiences = models.IntegerField()
     competances = models.TextField()
     valeur_humaine = models.TextField()
-    # reseau = models.URLField(max_length=200)
+    user = models.OneToOneField(UserAccount, related_name="info_consultant",on_delete=models.CASCADE)
+# reseau = models.URLField(max_length=200)
     # linkedin = models.URLField(max_length=200)
-    id_consultant = models.ForeignKey(UserAccount,on_delete=models.CASCADE)
-

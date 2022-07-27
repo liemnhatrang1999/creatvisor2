@@ -14,23 +14,29 @@ from rest_framework_serializer_extensions.serializers import SerializerExtension
 #         model = Client
 #         fields = '__all__'
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = User
-        fields = ('prenom','nom','email','phone','is_active')
+        fields = ('prenom','nom','email','phone','is_active','is_consultant')
 
 class Thematique_metierSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Thematique_metier
         fields = ('id','nom')
 
+class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
+    class Meta:
+        model = Info_entrepreneur
+        fields = ('photo','valeur_humaine','secteur','problematique','project','user')
+        expandable_fields = { 
+            'user' : (UserSerializer,{'many' : True}),
+        }
 class AtelierSerializer(FlexFieldsModelSerializer):
-    
     class Meta :
         model = Atelier
         fields = ('id','nbparticipants','nom','pre_requis','participants','thematique_metier')
         expandable_fields = { 
-            'participants' : (UserSerializer,{'many' : True}),
+            'participants' : (Info_entrepreneurSerializer,{'many' : True}),
             'thematique_metier' :(Thematique_metierSerializer,{'many' : True})
         }
             # dict(participant = serializers.SerializerMethodField)
@@ -42,10 +48,11 @@ class AtelierSerializer(FlexFieldsModelSerializer):
     
     # def get_participants(self, atelier):
     #     return count(atelier['participants'])
-class Info_entrepreneurSerializer(serializers.ModelSerializer):
+
+class Info_consultantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Info_entrepreneur
-        fields = ('photo','valeur_humaine','secteur','problematique','project_professionnel')
+        model = Info_consultant
+        fields = ('photo','valeur_humaine','experiences','competances')
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

@@ -8,8 +8,8 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('atelier',Atelier,basename='Atelier')
-
+router.register('atelier',AtelierView,basename='Atelier')
+router.register('info/entrepreneur',Info_entrepreneurView,basename='info_entrepreneur')
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -32,7 +32,7 @@ urlpatterns = [
         'get' : 'retrieve',
         'delete' : 'destroy',
     })),
-    path('api/login', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('',include(router.urls)),
     path('api/atelier/<int:pk>',DetailAtelier.as_view()),

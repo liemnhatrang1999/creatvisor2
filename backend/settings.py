@@ -44,6 +44,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'django_filters',
+    # 'django.contrib.sites',
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.facebook',
     
 ]
 
@@ -187,6 +192,7 @@ AUTH_USER_MODEL ='api.UserAccount'
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.RemoteUserBackend',
         'django.contrib.auth.backends.ModelBackend',
+        # 'allauth.account.auth_backends.AuthenticationBackend',
 
 )
 

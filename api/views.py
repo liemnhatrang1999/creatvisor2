@@ -116,22 +116,22 @@ class RegisterView(APIView):
                         password=password,
                         )
                     user.save()
-                    info_consultant = Info_consultant.objects.create(
-                        thematique=thematique,
-                        experiences=experiences,
-                        competances=competances,
-                        # reseau=reseau,
-                        # linkedin=linkedin,
-                        id_consultant=user)
-                    info_consultant.save()
+                    # info_consultant = Info_consultant.objects.create(
+                    #     thematique=thematique,
+                    #     experiences=experiences,
+                    #     competances=competances,
+                    #     # reseau=reseau,
+                    #     # linkedin=linkedin,
+                    #     id_consultant=user)
+                    # info_consultant.save()
                     
                     
                 else :
                 
                     user = User.objects.create_user(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
                     user.save()
-                    info_entrepreneur = Info_entrepreneur.objects.create(id_entrepreneur=user)
-                    info_entrepreneur.save()
+                    # info_entrepreneur = Info_entrepreneur.objects.create()
+                    # info_entrepreneur.save()
 
 
                 current_site = get_current_site(request)
@@ -194,14 +194,11 @@ class RetrieveView(APIView):
         except:
             Response({"error" : "something went wrong"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
-class Atelier(FlexFieldsModelViewSet):
+class AtelierView(FlexFieldsModelViewSet):
 
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
-    permit_list_expands =['participants','thematique_metier']
+    permit_list_expands =['participants','thematique_metier','participants.user']
     filter_backends = [filters.SearchFilter]
     search_fields = ['thematique_metier__nom']
     filterset_fields =('thematique_metier',)
@@ -216,9 +213,13 @@ class DetailAtelier(APIView):
 
 
 
-class Info_entrepreneurView(viewsets.ModelViewSet):
+class Info_entrepreneurView(FlexFieldsModelViewSet):
     queryset = Info_entrepreneur.objects.all()
     serializer_class = Info_entrepreneurSerializer
+    permit_list_expands =['user']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user__nom']
+    filterset_fields =('user',)
     permission_classes =[AllowAny]
     
         
