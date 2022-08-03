@@ -39,36 +39,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
 # class ClientViews(viewsets.ModelViewSet):
-#     queryset = Client.objects.all()
-#     serializer_class = ClientSerializer
-#     # permission_classes =[IsAuthenticated]
 
-
-# @csrf_exempt
-# @api_view(["POST"])
-# @permission_classes((AllowAny,))
-# def login(request):
-#     emailClient = request.data.get("emailClient")
-#     passwordClient = request.data.get("passwordClient")
-#     if emailClient is None or passwordClient is None:
-#         return Response({'error': 'Please provide both username and password'},
-#                         status=HTTP_400_BAD_REQUEST)
-#     user = authenticate(email=emailClient, password=passwordClient)
-#     if not user:
-#         return Response({'error': 'Invalid Credentials'},
-#                         status=HTTP_404_NOT_FOUND)
-#     token, _ = Token.objects.get_or_create(emailClient=emailClient)
-#     return Response({'token': token.key},
-#                     status=HTTP_200_OK)
-
-# class MyAccountManager(BaseUserManager):
-#     def create_user(self, nomClient=None, prenomClient=None, emailClient=None, mobileClient =None,passwordClient=None
-#                     ):
-#         if not email:
-#             raise ValueError('Users must have an email address')
-
-#         user = self.model(
 #             Email_Address=self.normalize_email(email),
 #             name=self.normalize_email(email),
 #             Date_of_Birth=birthday,
@@ -86,6 +62,9 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from .serializer import UserSerializer
 
+# from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+# from rest_auth.registration.views import SocialLoginView
+# from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 class RegisterView(APIView):
     permission_classes =[permissions.AllowAny]
@@ -102,6 +81,7 @@ class RegisterView(APIView):
             
         # if password == re_password :
             if not User.objects.filter(email=email).exists():
+
                 if is_consultant == True :
                     thematique =data['thematique']
                     experiences = data['experiences']
@@ -115,6 +95,7 @@ class RegisterView(APIView):
                         email=email,
                         password=password,
                         )
+                    user.is_active = False
                     user.save()
                     # info_consultant = Info_consultant.objects.create(
                     #     thematique=thematique,
@@ -129,6 +110,7 @@ class RegisterView(APIView):
                 else :
                 
                     user = User.objects.create_user(prenom=prenom,nom=nom,phone=phone,email=email,password=password)
+                    user.is_active = False
                     user.save()
                     # info_entrepreneur = Info_entrepreneur.objects.create()
                     # info_entrepreneur.save()
@@ -198,21 +180,17 @@ class AtelierView(FlexFieldsModelViewSet):
 
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
-    permit_list_expands =['participants','thematique_metier','participants.user']
+    permit_list_expands =['participants','thematique_metier','participants.user',]
     filter_backends = [filters.SearchFilter]
     search_fields = ['thematique_metier__nom']
     filterset_fields =('thematique_metier',)
     permission_classes=[AllowAny]
-
 
 class DetailAtelier(APIView):
     def get(self,request,pk):
         atelier = Atelier.objects.get(pk=pk)
         serializer = AtelierSerializer(atelier)
         return Response(serializer.data)
-
-
-
 class Info_entrepreneurView(FlexFieldsModelViewSet):
     queryset = Info_entrepreneur.objects.all()
     serializer_class = Info_entrepreneurSerializer
@@ -222,8 +200,33 @@ class Info_entrepreneurView(FlexFieldsModelViewSet):
     filterset_fields =('user',)
     permission_classes =[AllowAny]
     
-        
-
-class CustomTokenObtainPairView(TokenObtainPairView):
+class Info_consultantView(FlexFieldsModelViewSet):
+    queryset = Info_consultant.objects.all()
+    serializer_class = Info_consultantSerializer
+    permit_list_expands =['user']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user__nom']
+    filterset_fields =('user',)
     permission_classes =[AllowAny]
-    serializer_class = CustomTokenObtainPairSerializer
+    
+class AvisView(FlexFieldsModelViewSet):
+    queryset = Avis.objects.all()
+    serializer_class = AvisSerializer
+    permit_list_expands =['user','atelier','atelier.creator.user']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user__nom','atelier__nom']
+    filterset_fields =('user','atelier')
+    permission_classes =[AllowAny]
+    
+
+# class CustomTokenObtainPairView(TokenObtainPairView):
+#     permission_classes =[AllowAny]
+#     serializer_class = CustomTokenObtainPairSerializer
+
+class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    # callback_url = 
+    client_class = OAuth2Client
+
+# class GoogleLogin(SocialLoginView): # if you want to use Implicit Grant, use this
+#     adapter_class = GoogleOAuth2Adapter

@@ -5,3 +5,7 @@ pillow
 djangorestframework-simplejwt
 drf-flex-fields
 django-filter
+django-rest-auth
+django-allauth
+dj-rest-auth
+django-simple-sms

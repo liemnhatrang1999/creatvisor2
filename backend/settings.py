@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+from turtle import Turtle
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -44,12 +45,14 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'django_filters',
-    # 'django.contrib.sites',
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.facebook',
-    
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'rest_auth',
+    'rest_auth.registration',
+    'dj_rest_auth',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 MIDDLEWARE = [
@@ -60,7 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    # 'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -76,6 +80,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'social_django.context_processors.backends',
+                # 'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -168,6 +174,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': [
@@ -180,19 +187,35 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT ={
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
     'REFRESH_TOKEN_LIFETIME' :timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS' :False,
-    'BLACKLIST_AFTER_ROTATION' :False,
+    'ROTATE_REFRESH_TOKENS' :True,
+    'BLACKLIST_AFTER_ROTATION' :True,
     'AUTH_HEADER_TYPES':('Bearer',),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',)
+    # 'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',)
+}
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE ='jwt-auth'
+JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER' : 'api.serializer.MyLoginSerializer',
+    # 'JWT_SERIALIZER' : 'api.serializer.MyTokenObtainPairSerializer',
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'api.serializer.CustomTokenObtainPairSerializer'
+
+    # 'USER_DETAILS_SERIALIZERS' : 'api.serializer.MyTokenObtainPairSerialize'
+}
+
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER' : 'api.serializer.MyRegisterSerializer'
 }
 AUTH_USER_MODEL ='api.UserAccount'
-# AUTHENTICATION_BACKENDS = ['path.to.auth.module.EmailBackend']
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.RemoteUserBackend',
         'django.contrib.auth.backends.ModelBackend',
-        # 'allauth.account.auth_backends.AuthenticationBackend',
+        'allauth.account.auth_backends.AuthenticationBackend',
 
 )
 
@@ -211,24 +234,37 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
+SITE_ID = 1
+
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_UNIQUE_EMAIL=True
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_EMAIL_VERIFICATION = True
+
+OLD_PASSWORD_FIELD_ENABLED = True
+# JWT_AUTH = {
+#     'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.serializer.jwt_response_payload_handler',
 # }
+SMS_BACKEND = 'sms.backends.twilio.SmsBackend'
+TWILIO_ACCOUNT_SID = 'ACe55b0a3feed28b2eb15d65afb854db83'
+TWILIO_AUTH_TOKEN = 'e2206a2e55fb538bd25f4901dbfd7709'
