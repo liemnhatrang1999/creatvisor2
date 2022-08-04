@@ -39,10 +39,15 @@ urlpatterns = [
     path('api/login/', include('rest_social_auth.urls_jwt_pair')),
     url(r'^rest-auth/',include('dj_rest_auth.urls')),
     url(r'^rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    # url(r'^rest-auth/registration/account-confirm-mail/',ConfirmationEmailView.as_view(), name='account_email_verification_sent'),
     url(r'^rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
     url(r'^accounts/', include('allauth.urls')),
     path('rest-auth/password/reset/confirm/<str:uidb64>/<str:token>', PasswordResetConfirmView.as_view(),
             name='password_reset_confirm'),
+    # path('rest-auth/account-confirm-email/', VerifyEmailView.as_view(),
+    #         name='account_verify_email'),
+    # path('rest-auth/registration/account-confirm-email/<str:key>', ConfirmEmailView.as_view(),
+    #         name='account_confirm_email'),
 ]
 
 if settings.DEBUG:

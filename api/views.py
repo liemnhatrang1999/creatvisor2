@@ -14,7 +14,6 @@ from api import models
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets,filters
 from api.serializer import *
-# from .models import Client
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
@@ -42,6 +41,7 @@ from rest_framework_simplejwt.views import (
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.registration.views import VerifyEmailView,ConfirmEmailView
 
 # class ClientViews(viewsets.ModelViewSet):
 
@@ -230,3 +230,14 @@ class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Gran
 
 # class GoogleLogin(SocialLoginView): # if you want to use Implicit Grant, use this
 #     adapter_class = GoogleOAuth2Adapter
+
+# class VerifyEmailView(APIView, ConfirmEmailView):
+#     # ...
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         self.kwargs['key'] = serializer.validated_data['key']
+#         confirmation = self.get_object()
+#         confirmation.confirm(self.request)
+#         return Response({'detail': _('ok')}, status=status.HTTP_200_OK)
