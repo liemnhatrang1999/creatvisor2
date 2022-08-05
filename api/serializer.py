@@ -19,13 +19,13 @@ except ImportError:
 
 from django.db import transaction
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dj_rest_auth.serializers import JWTSerializer
 from rest_auth  import serializers as auth_serializers
 
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework_jwt.views import ObtainJSONWebToken
+# from rest_framework_jwt.views import ObtainJSONWebToken
 
 
 class UserSerializer(FlexFieldsModelSerializer):
@@ -46,13 +46,19 @@ class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
             'user' : (UserSerializer,{'many' : True}),
         }
 
+class CompetanceSerializer(FlexFieldsModelSerializer):
+    class Meta :
+        model = Competance
+        fields = ('id','nom')
 class Info_consultantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_consultant
         fields = ('photo','valeur_humaine','experiences','competances','user')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
-        }        
+            'competances' : (CompetanceSerializer,{'many' : True}),
+        }
+
 class AtelierSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Atelier
@@ -66,11 +72,11 @@ class AtelierSerializer(FlexFieldsModelSerializer):
         #if test_result is less than 80 execute this
         # counter  = self.participants.count()
         counter = len(self.validated_data['participants'])
-        print(counter)
+        
         t = []
         for telephone in self.validated_data['participants'] :
             t.append(telephone.user.get().phone)
-        print(t)
+        
         account_sid = 'ACe55b0a3feed28b2eb15d65afb854db83'
         auth_token = 'e2206a2e55fb538bd25f4901dbfd7709'
         client = Client(account_sid, auth_token)
@@ -115,18 +121,26 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['nom'] = user.nom
         token['prenom'] = user.prenom
         token['is_consultant'] = user.is_consultant
+        token['email'] = user.email
+        token['phone']= user.phone
         return token
-
 
 class MyRegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(write_only = True,required=True)
     password2 = serializers.CharField(write_only=True, required=True)
-
     class Meta:
         model = User
 
-        fields = ('prenom','nom','email','phone','password','password2','is_consultant')
+        fields = (
+            'prenom',
+            'nom',
+            'email',
+            'phone',
+            'password',
+            'password2',
+            'is_consultant',
+        )
         extra_kwargs = {
             'prenom': {'required': True},
             'nom': {'required': True},
@@ -178,7 +192,6 @@ class MyRegisterSerializer(serializers.ModelSerializer):
         self.custom_signup(request, user)
         setup_user_email(request, user, [])
         return user
-
 
 class MyLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True,allow_blank=True)

@@ -203,10 +203,10 @@ class Info_entrepreneurView(FlexFieldsModelViewSet):
 class Info_consultantView(FlexFieldsModelViewSet):
     queryset = Info_consultant.objects.all()
     serializer_class = Info_consultantSerializer
-    permit_list_expands =['user']
+    permit_list_expands =['user','competances']
     filter_backends = [filters.SearchFilter]
-    search_fields = ['user__nom']
-    filterset_fields =('user',)
+    search_fields = ['user__nom','competances__nom']
+    filterset_fields =('user','competances')
     permission_classes =[AllowAny]
     
 class AvisView(FlexFieldsModelViewSet):
@@ -219,11 +219,7 @@ class AvisView(FlexFieldsModelViewSet):
     permission_classes =[AllowAny]
     
 
-# class CustomTokenObtainPairView(TokenObtainPairView):
-#     permission_classes =[AllowAny]
-#     serializer_class = CustomTokenObtainPairSerializer
-
-class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
+class GoogleLogin(SocialLoginView): # if yougcd want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
     # callback_url = 
     client_class = OAuth2Client

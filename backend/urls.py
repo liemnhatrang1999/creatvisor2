@@ -19,7 +19,7 @@ from django.urls import path,include
 
 from rest_framework.authtoken.views import obtain_auth_token
 import api
-from django.conf.urls import url
+# from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
@@ -36,12 +36,12 @@ urlpatterns = [
     # path('accounts/', include('allauth.urls')),
     # path('auth/', include('rest_auth.urls'))  # here
     # path('auth/', include('rest_framework_social_oauth2.urls')),
-    path('api/login/', include('rest_social_auth.urls_jwt_pair')),
-    url(r'^rest-auth/',include('dj_rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    # path('api/login/', include('rest_social_auth.urls_jwt_pair')),
+    path('rest-auth/',include('dj_rest_auth.urls')),
+    path('rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     # url(r'^rest-auth/registration/account-confirm-mail/',ConfirmationEmailView.as_view(), name='account_email_verification_sent'),
-    url(r'^rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
-    url(r'^accounts/', include('allauth.urls')),
+    path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('accounts/', include('allauth.urls')),
     path('rest-auth/password/reset/confirm/<str:uidb64>/<str:token>', PasswordResetConfirmView.as_view(),
             name='password_reset_confirm'),
     # path('rest-auth/account-confirm-email/', VerifyEmailView.as_view(),

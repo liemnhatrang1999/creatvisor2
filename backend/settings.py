@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-92aw3$gqgoeyu93d_bpettn%1wd+2!ed_e6x!)z=%avra&_ovo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.42.73","127.0.0.1","localhost"]
 
 
 # Application definition
@@ -187,7 +187,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT ={
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME' :timedelta(days=1),
     'ROTATE_REFRESH_TOKENS' :True,
     'BLACKLIST_AFTER_ROTATION' :True,
@@ -202,8 +202,8 @@ JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER' : 'api.serializer.MyLoginSerializer',
     # 'JWT_SERIALIZER' : 'api.serializer.MyTokenObtainPairSerializer',
-    'JWT_TOKEN_CLAIMS_SERIALIZER': 'api.serializer.CustomTokenObtainPairSerializer'
-
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'api.serializer.CustomTokenObtainPairSerializer',
+    'USER_DETAILS_SERIALIZER' : 'api.serializer.UserSerializer'
     # 'USER_DETAILS_SERIALIZERS' : 'api.serializer.MyTokenObtainPairSerialize'
 }
 
@@ -251,7 +251,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = 'https://localhost:8000/rest-auth/login'
+# LOGIN_URL = 'https://localhost:8000/rest-auth/login'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED=True
