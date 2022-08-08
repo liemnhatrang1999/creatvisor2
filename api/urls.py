@@ -17,17 +17,17 @@ router.register('info/consultant',Info_consultantView,basename='info_consultant'
 router.register('avis',AvisView,basename='avis')
 
 urlpatterns = [
-    path('api/register',RegisterView.as_view()),
+    # path('api/register',RegisterView.as_view()),
     path('api/profile',RetrieveView.as_view()),
-    path('api/profile/upload',Info_entrepreneurView.as_view({
-        'get' : 'list',
-        'post' : 'create',
-    })),
-    path('api/profile/upload/<int:pk>',Info_entrepreneurView.as_view({
-        'put' : 'update',
-        'get' : 'retrieve',
-        'delete' : 'destroy',
-    })),
+    # path('api/profile/upload',Info_entrepreneurView.as_view({
+    #     'get' : 'list',
+    #     'post' : 'create',
+    # })),
+    # path('api/profile/upload/<int:pk>',Info_entrepreneurView.as_view({
+    #     'put' : 'update',
+    #     'get' : 'retrieve',
+    #     'delete' : 'destroy',
+    # })),
     path('',include(router.urls)),
     path('api/atelier/<int:pk>',DetailAtelier.as_view()),
     re_path(

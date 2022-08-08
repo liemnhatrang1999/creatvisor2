@@ -41,11 +41,11 @@ class Thematique_metierSerializer(FlexFieldsModelSerializer):
 class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_entrepreneur
-        fields = ('photo','valeur_humaine','secteur','problematique','project','user')
+        fields = ('id','photo','valeur_humaine','secteur','problematique','project','user')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
         }
-
+    
 class CompetanceSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Competance

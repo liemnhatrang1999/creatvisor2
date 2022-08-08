@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.shortcuts import render
 from rest_framework import generics
-
+import django_filters.rest_framework
 from rest_framework.response import Response
 from api import models
 from django.shortcuts import get_object_or_404
@@ -177,7 +177,6 @@ class RetrieveView(APIView):
             Response({"error" : "something went wrong"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AtelierView(FlexFieldsModelViewSet):
-
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
     permit_list_expands =['participants','thematique_metier','participants.user',]
@@ -191,12 +190,13 @@ class DetailAtelier(APIView):
         atelier = Atelier.objects.get(pk=pk)
         serializer = AtelierSerializer(atelier)
         return Response(serializer.data)
+        
 class Info_entrepreneurView(FlexFieldsModelViewSet):
     queryset = Info_entrepreneur.objects.all()
     serializer_class = Info_entrepreneurSerializer
     permit_list_expands =['user']
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['user__nom']
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    # search_fields = ['user__id']
     filterset_fields =('user',)
     permission_classes =[AllowAny]
     
@@ -204,8 +204,8 @@ class Info_consultantView(FlexFieldsModelViewSet):
     queryset = Info_consultant.objects.all()
     serializer_class = Info_consultantSerializer
     permit_list_expands =['user','competances']
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['user__nom','competances__nom']
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    # search_fields = ['user__nom','competances__nom']
     filterset_fields =('user','competances')
     permission_classes =[AllowAny]
     
@@ -218,8 +218,8 @@ class AvisView(FlexFieldsModelViewSet):
     filterset_fields =('user','atelier')
     permission_classes =[AllowAny]
     
-
-class GoogleLogin(SocialLoginView): # if yougcd want to use Authorization Code Grant, use this
+class GoogleLogin(SocialLoginView): 
+# if yougcd want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
     # callback_url = 
     client_class = OAuth2Client
