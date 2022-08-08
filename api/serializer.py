@@ -49,7 +49,8 @@ class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
 class CompetanceSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Competance
-        fields = ('id','nom')
+        fields = ('id','nom')    
+
 class Info_consultantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_consultant
@@ -244,5 +245,3 @@ class MyLoginSerializer(serializers.ModelSerializer):
         attrs['user'] = user
         
         return attrs
-
-

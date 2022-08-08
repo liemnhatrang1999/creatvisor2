@@ -28,8 +28,9 @@ SECRET_KEY = 'django-insecure-92aw3$gqgoeyu93d_bpettn%1wd+2!ed_e6x!)z=%avra&_ovo
 DEBUG = True
 
 ALLOWED_HOSTS = ["192.168.42.73","127.0.0.1","localhost"]
-
-
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOWED_ORIGINS =['http://localhost:3000','http://127.0.0.1:3000']
 # Application definition
 
 INSTALLED_APPS = [
@@ -164,7 +165,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ALLOW_ALL_ORIGINS= True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -259,7 +259,7 @@ ACCOUNT_UNIQUE_EMAIL=True
 SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_LOGOUT_ON_GET = True
+# ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_EMAIL_VERIFICATION = True
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 OLD_PASSWORD_FIELD_ENABLED = True
