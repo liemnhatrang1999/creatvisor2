@@ -39,6 +39,7 @@ urlpatterns = [
     # path('api/login/', include('rest_social_auth.urls_jwt_pair')),
     path('rest-auth/',include('dj_rest_auth.urls')),
     path('rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('rest-auth/logout/', BlacklistRefreshView.as_view(), name="logout"),
     # url(r'^rest-auth/registration/account-confirm-mail/',ConfirmationEmailView.as_view(), name='account_email_verification_sent'),
     path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
     path('accounts/', include('allauth.urls')),

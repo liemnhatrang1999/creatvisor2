@@ -15,6 +15,8 @@ router.register('atelier',AtelierView,basename='Atelier')
 router.register('info/entrepreneur',Info_entrepreneurView,basename='info_entrepreneur')
 router.register('info/consultant',Info_consultantView,basename='info_consultant')
 router.register('avis',AvisView,basename='avis')
+router.register('thematique',ThematiqueView,basename='thematique')
+
 
 urlpatterns = [
     # path('api/register',RegisterView.as_view()),

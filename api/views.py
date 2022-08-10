@@ -1,3 +1,4 @@
+from ast import keyword
 from asyncio import mixins
 import email
 from email import message
@@ -42,18 +43,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.registration.views import VerifyEmailView,ConfirmEmailView
-
-# class ClientViews(viewsets.ModelViewSet):
-
-#             Email_Address=self.normalize_email(email),
-#             name=self.normalize_email(email),
-#             Date_of_Birth=birthday,
-#             zipcode=zipcode,
-#         )
-
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from rest_framework.views import APIView
 from rest_framework import permissions,status
@@ -61,10 +51,41 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from .serializer import UserSerializer
+from rest_framework.compat import coreapi, coreschema, distinct
+import operator
+from functools import reduce
 
-# from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-# from rest_auth.registration.views import SocialLoginView
-# from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+class DynamicSearchFilter(filters.SearchFilter):
+     def filter_queryset(self, request, queryset, view):
+        search_fields = self.get_search_fields(view, request)
+        search_terms = self.get_search_terms(request)
+        if not search_fields or not search_terms:
+            return queryset
+
+        orm_lookups = [
+            self.construct_search(str(search_field))
+            for search_field in search_fields
+        ]
+
+        base = queryset
+        conditions = []
+        for search_term in search_terms:
+            queries = [
+                models.Q(**{orm_lookup: search_term})
+                for orm_lookup in orm_lookups
+            ]
+
+            conditions.append(reduce(operator.or_, queries))
+        queryset = queryset.filter(reduce(operator.or_, conditions))
+
+        if self.must_call_distinct(queryset, search_fields):
+            # Filtering against a many-to-many field requires us to
+            # call queryset.distinct() in order to avoid duplicate items
+            # in the resulting queryset.
+            # We try to avoid this if possible, for performance reasons.
+            queryset = distinct(queryset, base)
+        return queryset
 
 class RegisterView(APIView):
     permission_classes =[permissions.AllowAny]
@@ -180,10 +201,12 @@ class AtelierView(FlexFieldsModelViewSet):
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
     permit_list_expands =['participants','thematique_metier','participants.user',]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DynamicSearchFilter,]
     search_fields = ['thematique_metier__nom']
     filterset_fields =('thematique_metier',)
     permission_classes=[AllowAny]
+
+    
 
 class DetailAtelier(APIView):
     def get(self,request,pk):
@@ -217,7 +240,12 @@ class AvisView(FlexFieldsModelViewSet):
     search_fields = ['user__nom','atelier__nom']
     filterset_fields =('user','atelier')
     permission_classes =[AllowAny]
-    
+
+class ThematiqueView(FlexFieldsModelViewSet):
+    queryset = Thematique_metier.objects.all()
+    serializer_class = Thematique_metierSerializer
+    permission_classes =[AllowAny]
+
 class GoogleLogin(SocialLoginView): 
 # if yougcd want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
@@ -237,3 +265,10 @@ class GoogleLogin(SocialLoginView):
 #         confirmation = self.get_object()
 #         confirmation.confirm(self.request)
 #         return Response({'detail': _('ok')}, status=status.HTTP_200_OK)
+
+class BlacklistRefreshView(APIView):
+    def post(self, request) :
+        token = RefreshToken(request.data.get('refresh_token'))
+        token.blacklist()
+        return Response("Success")
+
