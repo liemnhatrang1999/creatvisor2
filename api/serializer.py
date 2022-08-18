@@ -56,7 +56,7 @@ class CompetanceSerializer(FlexFieldsModelSerializer):
 class Info_consultantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_consultant
-        fields = ('photo','valeur_humaine','experiences','competances','user')
+        fields = ('photo','valeur_humaine','experiences','competances','user','localisation','tarif')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
             'competances' : (CompetanceSerializer,{'many' : True}),

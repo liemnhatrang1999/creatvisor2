@@ -1,4 +1,3 @@
-from ast import Pass
 import email
 import site
 from typing import Counter
@@ -82,7 +81,8 @@ class Info_consultant(models.Model):
     competances = models.ManyToManyField(Competance,related_name="info_consultant")
     valeur_humaine = models.TextField()
     user = models.ManyToManyField(UserAccount, related_name="info_consultant",)
-    
+    localisation = models.TextField()
+    tarif = models.DecimalField(max_digits=5, decimal_places=2)
     def __str__(self) :
         L=[]
         user= self.user.all()
