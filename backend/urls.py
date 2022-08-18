@@ -42,6 +42,8 @@ urlpatterns = [
     path('rest-auth/logout/', BlacklistRefreshView.as_view(), name="logout"),
     # url(r'^rest-auth/registration/account-confirm-mail/',ConfirmationEmailView.as_view(), name='account_email_verification_sent'),
     path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('rest-auth/facebook/', FacebookLogin.as_view(), name='facebook_login'),
+    path('rest-auth/delete/', UserDetailApiView.as_view(), name='delete'),
     path('accounts/', include('allauth.urls')),
     path('rest-auth/password/reset/confirm/<str:uidb64>/<str:token>', PasswordResetConfirmView.as_view(),
             name='password_reset_confirm'),

@@ -40,6 +40,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.registration.views import VerifyEmailView,ConfirmEmailView
@@ -200,13 +201,11 @@ class RetrieveView(APIView):
 class AtelierView(FlexFieldsModelViewSet):
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
-    permit_list_expands =['participants','thematique_metier','participants.user',]
+    permit_list_expands =['participants','thematique_metier','participants.user','creator','creator.competances']
     filter_backends = [DynamicSearchFilter,]
-    search_fields = ['thematique_metier__nom']
+    search_fields = ['thematique_metier__nom','creator__competances__nom']
     filterset_fields =('thematique_metier',)
     permission_classes=[AllowAny]
-
-    
 
 class DetailAtelier(APIView):
     def get(self,request,pk):
@@ -235,10 +234,10 @@ class Info_consultantView(FlexFieldsModelViewSet):
 class AvisView(FlexFieldsModelViewSet):
     queryset = Avis.objects.all()
     serializer_class = AvisSerializer
-    permit_list_expands =['user','atelier','atelier.creator.user']
+    permit_list_expands =['user','atelier','atelier.creator.user','atelier.creator']
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__nom','atelier__nom']
-    filterset_fields =('user','atelier')
+    filterset_fields =('user','atelier','atelier.creator')
     permission_classes =[AllowAny]
 
 class ThematiqueView(FlexFieldsModelViewSet):
@@ -247,13 +246,14 @@ class ThematiqueView(FlexFieldsModelViewSet):
     permission_classes =[AllowAny]
 
 class GoogleLogin(SocialLoginView): 
-# if yougcd want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
     # callback_url = 
     client_class = OAuth2Client
 
-# class GoogleLogin(SocialLoginView): # if you want to use Implicit Grant, use this
-#     adapter_class = GoogleOAuth2Adapter
+class FacebookLogin(SocialLoginView): 
+    adapter_class = FacebookOAuth2Adapter
+    clienlt_class = OAuth2Client
+
 
 # class VerifyEmailView(APIView, ConfirmEmailView):
 #     # ...
@@ -272,3 +272,18 @@ class BlacklistRefreshView(APIView):
         token.blacklist()
         return Response("Success")
 
+class PartenaireView(FlexFieldsModelViewSet):
+    queryset = Partenaire.objects.all()
+    serializer_class = PartenaireSerializer
+    permit_list_expands =['thematique_metier']
+    filter_backends = [DynamicSearchFilter,]
+    search_fields = ['thematique_metier__nom']
+    filterset_fields =('thematique_metier',)
+    permission_classes=[AllowAny]
+
+
+class UserDetailApiView(generics.RetrieveDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class=UserSerializer
+    def get_object(self):
+        return self.request.user

@@ -78,7 +78,6 @@ class Competance (models.Model):
 
 class Info_consultant(models.Model):
     photo = models.ImageField( upload_to='media', height_field=None, width_field=None, max_length=None,blank = True)
-    thematique = models.TextField()
     experiences = models.IntegerField()
     competances = models.ManyToManyField(Competance,related_name="info_consultant")
     valeur_humaine = models.TextField()
@@ -116,3 +115,13 @@ class Avis (models.Model):
     qualite = models.DecimalField(max_digits=5, decimal_places=2)
     atelier = models.ManyToManyField(Atelier, related_name="avis")
     commentaire = models.TextField()
+
+class Partenaire(models.Model):
+    nom = models.CharField(max_length=255)
+    description= models.TextField()
+    logo = models.ImageField(upload_to='media', height_field=None, width_field=None, max_length=None,blank = True)
+    thematique_metier = models.ManyToManyField(Thematique_metier,related_name="partenaire")
+
+    def __str__(self):
+        return self.nom
+    

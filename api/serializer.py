@@ -1,3 +1,5 @@
+from dataclasses import fields
+from pyexpat import model
 from rest_framework import serializers,exceptions
 from .models import *
 from django.contrib.auth import get_user_model,authenticate
@@ -245,3 +247,11 @@ class MyLoginSerializer(serializers.ModelSerializer):
         attrs['user'] = user
         
         return attrs
+
+class PartenaireSerializer(FlexFieldsModelSerializer):
+    class Meta:
+        model = Partenaire
+        fields = ('nom','description','logo','thematique_metier')
+        expandable_fields = { 
+            'thematique_metier' : (Thematique_metierSerializer,{'many' : True}),
+        }

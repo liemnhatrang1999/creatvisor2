@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'rest_auth',
     'rest_auth.registration',
     'dj_rest_auth',
@@ -103,23 +104,6 @@ DATABASES = {
         'HOST':'localhost', 
         'PORT':'3306'
     }
-    # 'users' :{
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'backend', 
-    #     'USER':'liemliam', 
-    #     'PASSWORD':'anhliem12',  
-    #     'HOST':'localhost', 
-    #     'PORT':'3306'
-    # },
-
-    # 'atelier' : {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'atelier', 
-    #     'USER':'liemliam', 
-    #     'PASSWORD':'anhliem12',  
-    #     'HOST':'localhost', 
-    #     'PORT':'3306'
-    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR,'db.sqlite3'), 
@@ -247,7 +231,18 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         }
-    }
+    },
+    'facebook': {
+        
+        'SCOPE': [
+            'public_profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+     
+        }
 }
 
 LOGIN_REDIRECT_URL = '/'

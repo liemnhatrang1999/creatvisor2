@@ -16,6 +16,7 @@ router.register('info/entrepreneur',Info_entrepreneurView,basename='info_entrepr
 router.register('info/consultant',Info_consultantView,basename='info_consultant')
 router.register('avis',AvisView,basename='avis')
 router.register('thematique',ThematiqueView,basename='thematique')
+router.register('partenaire',PartenaireView,basename='partenaire')
 
 
 urlpatterns = [
