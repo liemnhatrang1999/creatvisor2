@@ -201,10 +201,10 @@ class RetrieveView(APIView):
 class AtelierView(FlexFieldsModelViewSet):
     queryset = Atelier.objects.all()
     serializer_class = AtelierSerializer
-    permit_list_expands =['participants','thematique_metier','participants.user','creator','creator.competances']
+    permit_list_expands =['participants','thematique_metier','participants.user','creator','creator.competances','creator.user']
     filter_backends = [DynamicSearchFilter,]
-    search_fields = ['thematique_metier__nom','creator__competances__nom']
-    filterset_fields =('thematique_metier',)
+    search_fields = ['thematique_metier__nom','creator__competances__nom',"participants__id"]
+    filterset_fields =('thematique_metier')
     permission_classes=[AllowAny]
 
 class DetailAtelier(APIView):
@@ -234,7 +234,7 @@ class Info_consultantView(FlexFieldsModelViewSet):
 class AvisView(FlexFieldsModelViewSet):
     queryset = Avis.objects.all()
     serializer_class = AvisSerializer
-    permit_list_expands =['user','atelier','atelier.creator.user','atelier.creator']
+    permit_list_expands =['user','atelier','atelier.creator.user','atelier.creator','atelier.creator.user']
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__nom','atelier__nom']
     filterset_fields =('user','atelier','atelier.creator')

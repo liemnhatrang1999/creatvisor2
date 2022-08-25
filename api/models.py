@@ -80,9 +80,13 @@ class Info_consultant(models.Model):
     experiences = models.IntegerField()
     competances = models.ManyToManyField(Competance,related_name="info_consultant")
     valeur_humaine = models.TextField()
-    user = models.ManyToManyField(UserAccount, related_name="info_consultant",)
+    user = models.ManyToManyField(UserAccount, related_name="info_consultant",blank=True)
     localisation = models.TextField()
     tarif = models.DecimalField(max_digits=5, decimal_places=2)
+    site_web =models.URLField(max_length=200,blank=True)
+    note_moyenne = models.DecimalField(max_digits=5, decimal_places=2,blank=True,default=0)
+    nb_avis = models.IntegerField(blank=True,default=0)
+
     def __str__(self) :
         L=[]
         user= self.user.all()
@@ -103,18 +107,23 @@ class Atelier(models.Model):
     participants = models.ManyToManyField(Info_entrepreneur,related_name="atelier",blank=True,)
     creator = models.ManyToManyField(Info_consultant,related_name="atelier",)
     created_date = models.DateTimeField (auto_now_add = True)
-    expires_date = models.DateTimeField ()
-
+    expires_date =models.DateTimeField()
+    annulation_date = models.DateTimeField()
+    
     def __str__(self) :
         return self.nom
 
-class Avis (models.Model):
+class Avis(models.Model):
     user = models.ManyToManyField(UserAccount,related_name='avis')
     ponctualite = models.DecimalField(max_digits=5, decimal_places=2)
     respect = models.DecimalField(max_digits=5, decimal_places=2)
     qualite = models.DecimalField(max_digits=5, decimal_places=2)
     atelier = models.ManyToManyField(Atelier, related_name="avis")
     commentaire = models.TextField()
+    moyenne_atelier = models.DecimalField(max_digits=5, decimal_places=2,default=0)
+    # info_consultant = models.ManyToManyField(Info_consultant,related_name='avis')
+    def __str__(self) :
+        return self.commentaire
 
 class Partenaire(models.Model):
     nom = models.CharField(max_length=255)
@@ -125,3 +134,4 @@ class Partenaire(models.Model):
     def __str__(self):
         return self.nom
     
+

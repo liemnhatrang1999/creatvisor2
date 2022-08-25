@@ -33,12 +33,12 @@ from rest_framework.response import Response
 class UserSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = User
-        fields = ('prenom','nom','email','phone','is_active','is_consultant')
+        fields = ('id','prenom','nom','email','phone','is_active','is_consultant')
 
 class Thematique_metierSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Thematique_metier
-        fields = ('id','nom')
+        fields = ('id','nom',)
 
 class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
     class Meta:
@@ -51,12 +51,12 @@ class Info_entrepreneurSerializer(FlexFieldsModelSerializer):
 class CompetanceSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Competance
-        fields = ('id','nom')    
+        fields = ('id','nom',)    
 
 class Info_consultantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_consultant
-        fields = ('photo','valeur_humaine','experiences','competances','user','localisation','tarif')
+        fields = ('id','photo','valeur_humaine','experiences','competances','user','localisation','tarif','site_web','note_moyenne','nb_avis')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
             'competances' : (CompetanceSerializer,{'many' : True}),
@@ -65,14 +65,13 @@ class Info_consultantSerializer(FlexFieldsModelSerializer):
 class AtelierSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Atelier
-        fields = ('id','nom','pre_requis','participants','thematique_metier','creator','expires_date')
+        fields = ('id','nom','pre_requis','participants','thematique_metier','creator','created_date','annulation_date')
         expandable_fields = { 
             'participants' : (Info_entrepreneurSerializer,{'many' : True}),
             'thematique_metier' :(Thematique_metierSerializer,{'many' : True}),
             'creator' :(Info_consultantSerializer,{'many' : True}),
         }
     def save(self, *args, **kwargs):
-        #if test_result is less than 80 execute this
         # counter  = self.participants.count()
         counter = len(self.validated_data['participants'])
         
@@ -84,7 +83,6 @@ class AtelierSerializer(FlexFieldsModelSerializer):
         auth_token = 'e2206a2e55fb538bd25f4901dbfd7709'
         client = Client(account_sid, auth_token)
         # for telephone in t:
-            
         #     try:
         #         print(telephone)
         #         validation_request = client.validation_requests \
@@ -111,10 +109,11 @@ class AtelierSerializer(FlexFieldsModelSerializer):
 class AvisSerializer(FlexFieldsModelSerializer):
     class Meta  :
         model = Avis
-        fields =('user','ponctualite','qualite','respect','atelier','commentaire')
+        fields =('id','user','ponctualite','qualite','respect','atelier','commentaire','moyenne_atelier')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
             'atelier' :(AtelierSerializer,{'many' : True}),
+            'info_consultant' :(Info_consultantSerializer,{'many' : True}),
         }
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
