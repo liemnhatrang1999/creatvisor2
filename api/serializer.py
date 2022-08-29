@@ -24,7 +24,8 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from dj_rest_auth.serializers import JWTSerializer
 from rest_auth  import serializers as auth_serializers
-
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 # from rest_framework_jwt.views import ObtainJSONWebToken
@@ -33,7 +34,7 @@ from rest_framework.response import Response
 class UserSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = User
-        fields = ('id','prenom','nom','email','phone','is_active','is_consultant')
+        fields = ('id','prenom','nom','email','phone','is_active','is_consultant','is_averti','is_interdit')
 
 class Thematique_metierSerializer(FlexFieldsModelSerializer):
     class Meta :
@@ -65,7 +66,7 @@ class Info_consultantSerializer(FlexFieldsModelSerializer):
 class AtelierSerializer(FlexFieldsModelSerializer):
     class Meta :
         model = Atelier
-        fields = ('id','nom','pre_requis','participants','thematique_metier','creator','created_date','annulation_date')
+        fields = ('id','nom','pre_requis','participants','thematique_metier','creator','created_date','expires_date')
         expandable_fields = { 
             'participants' : (Info_entrepreneurSerializer,{'many' : True}),
             'thematique_metier' :(Thematique_metierSerializer,{'many' : True}),
@@ -96,20 +97,18 @@ class AtelierSerializer(FlexFieldsModelSerializer):
                 
         if counter == 4 :
             #twilio code
-            for telephone in t:
-                
+            for telephone in t: 
                 message = client.messages.create(
                                             body=f'Bonjour , votre atelier est complet',
                                             from_='+15139934888',
                                             to=telephone)
-
                 print(message.sid)
         return super().save(*args, **kwargs)
 
 class AvisSerializer(FlexFieldsModelSerializer):
     class Meta  :
         model = Avis
-        fields =('id','user','ponctualite','qualite','respect','atelier','commentaire','moyenne_atelier')
+        fields =('id','user','ponctualite','qualite','respect','atelier','commentaire','moyenne_atelier','info_consultant')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
             'atelier' :(AtelierSerializer,{'many' : True}),
@@ -123,6 +122,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['nom'] = user.nom
         token['prenom'] = user.prenom
         token['is_consultant'] = user.is_consultant
+        token['is_averti'] = user.is_averti
+        token['is_interdit'] = user.is_interdit
         token['email'] = user.email
         token['phone']= user.phone
         return token
@@ -142,6 +143,8 @@ class MyRegisterSerializer(serializers.ModelSerializer):
             'password',
             'password2',
             'is_consultant',
+            'is_averti',
+            'is_interdit',
         )
         extra_kwargs = {
             'prenom': {'required': True},
@@ -174,10 +177,27 @@ class MyRegisterSerializer(serializers.ModelSerializer):
             'nom': self.validated_data.get('nom', ''),
             'phone': self.validated_data.get('phone', ''),
             'is_consultant': self.validated_data.get('is_consultant', ''),
+            'is_averti': self.validated_data.get('is_averti', 0),
+            'is_interdit': self.validated_data.get('is_interdit', ''),
         }
     def custom_signup(self, request, user):
         user.set_password(self.cleaned_data['password'])
         user.save()
+        token = account_activation_token.make_token(user)
+
+        # mail_subject = 'Activate your blog account.'
+        # message = f"Hi , Please click on the link to confirm your registration, http://127.0.0.1:8000/accounts/confirm-email/{token}"
+        # # message = render_to_string('acc_active_email.html', {
+        # #     'user': User,
+        # #     'domain': current_site.domain,
+        # #     'uid':urlsafe_base64_encode(force_bytes(User.pk)),
+        # #     'token':account_activation_token.make_token(User),
+        # # })
+        
+        # email1 = EmailMessage(
+        #             mail_subject, message, settings.EMAIL_HOST_USER,[user.email]
+        # )
+        # email1.send()
         return user
 
 
@@ -190,6 +210,8 @@ class MyRegisterSerializer(serializers.ModelSerializer):
         user.nom = self.cleaned_data['nom'] 
         user.phone = self.cleaned_data['phone'] 
         user.is_consultant = self.cleaned_data['is_consultant']
+        user.is_averti = self.cleaned_data['is_averti']
+        user.is_interdit = self.cleaned_data['is_interdit']
         adapter.save_user(request, user, self)
         self.custom_signup(request, user)
         setup_user_email(request, user, [])

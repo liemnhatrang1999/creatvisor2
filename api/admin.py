@@ -5,7 +5,7 @@ from api.models import Atelier, Avis, Competance, Info_consultant, Info_entrepre
 
 @admin.register(UserAccount)
 class UserAdmin(admin.ModelAdmin):
-    list_display =('email','nom','prenom','phone','is_consultant')
+    list_display =('email','nom','prenom','phone','is_consultant','is_averti','is_interdit')
     ordering = ['nom']
     search_fields = ('nom',)
 

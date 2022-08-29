@@ -26,7 +26,6 @@ class UserAccountManager(BaseUserManager):
         return user
     def create_superuser(self, email , prenom ,nom,phone,password = None):
         user = self.create_user(email,prenom,nom,phone,password)
-        user.is_staff = True
         user.is_superuser = True
         user.is_active = True
         user.save(using =self._db)
@@ -38,8 +37,9 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
     nom = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
-    is_staff   = models.BooleanField(default=False)
     is_consultant  = models.BooleanField(default=False)
+    is_averti  = models.IntegerField(default=0)
+    is_interdit =  models.BooleanField(default=False)
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'
@@ -77,16 +77,16 @@ class Competance (models.Model):
 
 class Info_consultant(models.Model):
     photo = models.ImageField( upload_to='media', height_field=None, width_field=None, max_length=None,blank = True)
-    experiences = models.IntegerField()
-    competances = models.ManyToManyField(Competance,related_name="info_consultant")
-    valeur_humaine = models.TextField()
+    experiences = models.IntegerField(default=0)
+    competances = models.ManyToManyField(Competance,related_name="info_consultant",blank=True)
+    valeur_humaine = models.TextField(blank=True)
     user = models.ManyToManyField(UserAccount, related_name="info_consultant",blank=True)
-    localisation = models.TextField()
-    tarif = models.DecimalField(max_digits=5, decimal_places=2)
+    localisation = models.TextField(blank=True)
+    tarif = models.DecimalField(max_digits=5, decimal_places=2,default=0)
     site_web =models.URLField(max_length=200,blank=True)
     note_moyenne = models.DecimalField(max_digits=5, decimal_places=2,blank=True,default=0)
     nb_avis = models.IntegerField(blank=True,default=0)
-
+    # video_youtube = models.URLField(max_length=200)
     def __str__(self) :
         L=[]
         user= self.user.all()
@@ -108,8 +108,7 @@ class Atelier(models.Model):
     creator = models.ManyToManyField(Info_consultant,related_name="atelier",)
     created_date = models.DateTimeField (auto_now_add = True)
     expires_date =models.DateTimeField()
-    annulation_date = models.DateTimeField()
-    
+    is_gratuit = models.BooleanField(default=False)
     def __str__(self) :
         return self.nom
 
@@ -121,7 +120,7 @@ class Avis(models.Model):
     atelier = models.ManyToManyField(Atelier, related_name="avis")
     commentaire = models.TextField()
     moyenne_atelier = models.DecimalField(max_digits=5, decimal_places=2,default=0)
-    # info_consultant = models.ManyToManyField(Info_consultant,related_name='avis')
+    info_consultant = models.ManyToManyField(Info_consultant,related_name='avis',blank=True)
     def __str__(self) :
         return self.commentaire
 

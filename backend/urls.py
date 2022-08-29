@@ -31,9 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('auth/',obtain_auth_token),
     path('',include('api.urls')),
-    # path('rest-auth/google/', GoogleLogin.as_view(), name='google_login')
     # path('auth/user/',include('api.urls'))
-    # path('accounts/', include('allauth.urls')),
     # path('auth/', include('rest_auth.urls'))  # here
     # path('auth/', include('rest_framework_social_oauth2.urls')),
     # path('api/login/', include('rest_social_auth.urls_jwt_pair')),

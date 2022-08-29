@@ -12,7 +12,6 @@ from rest_framework import generics
 import django_filters.rest_framework
 from rest_framework.response import Response
 from api import models
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets,filters
 from api.serializer import *
 from rest_framework.permissions import IsAuthenticated
@@ -88,7 +87,7 @@ class DynamicSearchFilter(filters.SearchFilter):
             queryset = distinct(queryset, base)
         return queryset
 
-class RegisterView(APIView):
+class RegisterView(FlexFieldsModelViewSet):
     permission_classes =[permissions.AllowAny]
     def post(self,request):
         try :
@@ -203,9 +202,19 @@ class AtelierView(FlexFieldsModelViewSet):
     serializer_class = AtelierSerializer
     permit_list_expands =['participants','thematique_metier','participants.user','creator','creator.competances','creator.user']
     filter_backends = [DynamicSearchFilter,]
-    search_fields = ['thematique_metier__nom','creator__competances__nom',"participants__id"]
+    search_fields = ['thematique_metier__nom','creator__competances__nom',"participants__user__id"]
     filterset_fields =('thematique_metier')
     permission_classes=[AllowAny]
+
+# class AtelierCreatorView(FlexFieldsModelViewSet):
+#     queryset = Atelier.objects.all()
+#     serializer_class = AtelierSerializer
+#     permit_list_expands =['participants','thematique_metier','participants.user','creator','creator.competances','creator.user']
+#     filter_backends = [DynamicSearchFilter,]
+#     search_fields = ['thematique_metier__nom','creator__competances__nom',"creator__id"]
+#     filterset_fields =('thematique_metier')
+#     permission_classes=[AllowAny]
+
 
 class DetailAtelier(APIView):
     def get(self,request,pk):
@@ -236,7 +245,7 @@ class AvisView(FlexFieldsModelViewSet):
     serializer_class = AvisSerializer
     permit_list_expands =['user','atelier','atelier.creator.user','atelier.creator','atelier.creator.user']
     filter_backends = [filters.SearchFilter]
-    search_fields = ['user__nom','atelier__nom']
+    search_fields = ['user__nom','atelier__nom','atelier__id']
     filterset_fields =('user','atelier','atelier.creator')
     permission_classes =[AllowAny]
 
@@ -253,7 +262,6 @@ class GoogleLogin(SocialLoginView):
 class FacebookLogin(SocialLoginView): 
     adapter_class = FacebookOAuth2Adapter
     clienlt_class = OAuth2Client
-
 
 # class VerifyEmailView(APIView, ConfirmEmailView):
 #     # ...
@@ -281,9 +289,10 @@ class PartenaireView(FlexFieldsModelViewSet):
     filterset_fields =('thematique_metier',)
     permission_classes=[AllowAny]
 
-
 class UserDetailApiView(generics.RetrieveDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class=UserSerializer
     def get_object(self):
         return self.request.user
+
+
