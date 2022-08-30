@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from api.models import Atelier, Avis, Competance, Info_consultant, Info_entrepreneur, Partenaire, Thematique_metier, UserAccount
+from api.models import Atelier, Avis, Certification, Competance, Exp, Formation, Info_consultant, Info_entrepreneur, Partenaire, Thematique_metier, UserAccount
 
 @admin.register(UserAccount)
 class UserAdmin(admin.ModelAdmin):
@@ -16,5 +16,8 @@ admin.site.register(Thematique_metier)
 admin.site.register(Competance)
 admin.site.register(Partenaire)
 admin.site.register(Avis)
+admin.site.register(Formation)
+admin.site.register(Certification)
+admin.site.register(Exp)
 
 

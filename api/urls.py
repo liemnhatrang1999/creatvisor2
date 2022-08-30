@@ -18,9 +18,9 @@ router.register('info/consultant',Info_consultantView,basename='info_consultant'
 router.register('avis',AvisView,basename='avis')
 router.register('thematique',ThematiqueView,basename='thematique')
 router.register('partenaire',PartenaireView,basename='partenaire')
-# router.register('register',RegisterView,basename='register')
-
-
+router.register('formation',FormationView,basename='formation')
+router.register('certification',CertificationView,basename='certification')
+router.register('exp',ExpView,basename='exp')
 urlpatterns = [
     # path('api/register',RegisterView,),
     # path('api/profile',RetrieveView.as_view()),

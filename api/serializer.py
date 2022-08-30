@@ -1,5 +1,7 @@
 from dataclasses import fields
+from datetime import date
 from pyexpat import model
+from sre_parse import expand_template
 from rest_framework import serializers,exceptions
 from .models import *
 from django.contrib.auth import get_user_model,authenticate
@@ -54,13 +56,30 @@ class CompetanceSerializer(FlexFieldsModelSerializer):
         model = Competance
         fields = ('id','nom',)    
 
+class FormationSerializer(FlexFieldsModelSerializer):
+    class Meta :
+        model= Formation
+        fields =('id','nom_diplome','annee','ecole','description','is_encours')
+class CertificationSerializer(FlexFieldsModelSerializer):
+    class Meta :
+        model= Certification
+        fields =('id','nom_certification','annee','organisme','lien_certification','is_encours','location')
+       
+class ExpSerializer(FlexFieldsModelSerializer):
+    class Meta :
+        model= Exp
+        fields =('id','societe','secteur_activite','titre','is_freelance','location','is_encours','date_debut','date_fin')
+
 class Info_consultantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Info_consultant
-        fields = ('id','photo','valeur_humaine','experiences','competances','user','localisation','tarif','site_web','note_moyenne','nb_avis')
+        fields = ('id','photo','valeur_humaine','experiences','competances','user','localisation','tarif','site_web','note_moyenne','nb_avis','formation','certification','exp')
         expandable_fields = { 
             'user' : (UserSerializer,{'many' : True}),
             'competances' : (CompetanceSerializer,{'many' : True}),
+            'formation' : (FormationSerializer,{'many' : True}),
+            'certification' : (CertificationSerializer,{'many' : True}),
+            'exp' : (ExpSerializer,{'many' : True}),
         }
 
 class AtelierSerializer(FlexFieldsModelSerializer):

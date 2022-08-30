@@ -295,4 +295,30 @@ class UserDetailApiView(generics.RetrieveDestroyAPIView):
     def get_object(self):
         return self.request.user
 
+class FormationView(FlexFieldsModelViewSet):
+    queryset = Formation.objects.all()
+    serializer_class = FormationSerializer
+    # permit_list_expands =['consultant']
+    # filter_backends = [DynamicSearchFilter,]
+    # search_fields = ['consultant__id']
+    # filterset_fields =('constultant',)
+    permission_classes=[AllowAny]
+
+class CertificationView(FlexFieldsModelViewSet):
+    queryset = Certification.objects.all()
+    serializer_class = CertificationSerializer
+    # permit_list_expands =['consultant']
+    # filter_backends = [DynamicSearchFilter,]
+    # search_fields = ['consultant__id']
+    # filterset_fields =('constultant',)
+    permission_classes=[AllowAny]
+
+class ExpView(FlexFieldsModelViewSet):
+    queryset = Exp.objects.all()
+    serializer_class = ExpSerializer
+    # permit_list_expands =['consultant']
+    # filter_backends = [DynamicSearchFilter,]
+    # search_fields = ['consultant__id']
+    # filterset_fields =('constultant',)
+    permission_classes=[AllowAny]
 
