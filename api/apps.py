@@ -6,6 +6,4 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
-        import api.signals.ficheexpert  
-        import api.signals.profile  
-        import api.signals.updateavis  
+        import api.signals  
